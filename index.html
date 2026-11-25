@@ -251,6 +251,17 @@ const NEW2=[
 ];
 E.splice(E.findIndex(x=>x.id==="C5")+1,0,NEW2[0]);
 E.splice(E.findIndex(x=>x.id==="E3")+1,0,NEW2[1]);
+// ---- Phase 1 rule: 30-day membership, no renewal before it ends (subscribe again after it ends)
+(function(){const g=id=>E.find(e=>e.id===id);
+ if(!SCREEN["View membership"])SCREEN["View membership"]="S5 · Membership";
+ Object.assign(g("C2"),{pre:"You can subscribe again after it ends",body:"Hi {{user_name}}, your {{plan_name}} membership ends on {{valid_until}}. You can subscribe again after it ends.",cta:"View membership",why:"Phase 1 memberships last 30 days and can’t be renewed early, so this only tells the member when it ends."});
+ Object.assign(g("C3"),{pre:"You can subscribe again after it ends",body:"Hi {{user_name}}, your {{plan_name}} membership ends tomorrow, {{valid_until}}. You can subscribe again after it ends.",cta:"View membership",why:"Phase 1 memberships last 30 days and can’t be renewed early, so this only tells the member when it ends."});
+ Object.assign(g("C4"),{pre:"You can still borrow with tokens, or subscribe again anytime",body:"Hi {{user_name}}, your {{plan_name}} membership ended on {{valid_until}}. You can still borrow with tokens and a deposit, or subscribe again anytime to borrow without them.",cta:"See plans"});
+ const c5=g("C5");Object.assign(c5,{only:2,st:"new",whoNote:"Card",when:"A card renewal succeeded automatically (the user is not on screen). PromptPay renewals are confirmed on screen (S5-r) and don’t send this.",pre:"Now valid until {{valid_until}}",headline:"You’re renewed!",body:"Hi {{user_name}}, your {{plan_name}} membership has been renewed with {{payment_method}} and is now valid until {{valid_until}}. You can request a receipt or tax invoice within 7 days in Billing history.",cta:"View billing history",why2:"New in Phase 2. Phase 1 has no renewal (30 days, subscribe again after it ends); card members renew automatically in Phase 2."});delete c5.old;delete c5.chg;
+ P2.C2.ov.cta="Renew membership";P2.C2.chg=["pre","body","cta"];P2.C2.why="PromptPay members can renew before the end date in Phase 2, so the reminder asks them to renew (Phase 1 only says when it ends).";
+ P2.C3={upd:true,chg:["pre","body","cta"],whoNote:"PromptPay",ov:{when:"1 day before membership ends. PromptPay members only.",pre:"Renew today to keep borrowing without tokens",body:"Hi {{user_name}}, your {{plan_name}} membership ends tomorrow, {{valid_until}}. Renew today so you can keep borrowing without tokens or a deposit.",cta:"Renew membership"},why:"PromptPay members can renew before the end date in Phase 2, so the reminder asks them to renew (Phase 1 only says when it ends)."};
+ delete P2.C5;
+})();
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ph=s=>esc(s).replace(/\{\{(\w+)\}\}/g,'<span class="ph">{{$1}}</span>');
 let state={phase:2,st:"all",who:"all",id:"overview",vp:2,ver:"after"};
