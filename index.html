@@ -117,6 +117,7 @@ table.ov tr.dis td.nm{text-decoration:line-through}
 table.ov .cell{border:0;background:transparent;font:inherit;cursor:pointer;padding:2px 0;color:inherit}
 table.ov .cell:hover{text-decoration:underline}
 .legend2{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:14px 0 0}
+.order{margin:16px 0 4px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:rgba(127,127,127,.08);color:var(--mail-ink);font-size:14px;line-height:1.6}.order .oh{font-weight:600;margin-bottom:6px;color:var(--mail-ink)}.order .note{color:var(--mail-ink);opacity:.65;font-size:12.5px;margin-top:4px}
 </style>
 </head>
 <body>
@@ -155,32 +156,32 @@ const LOGO='<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAAAiCAYA
 const GROUPS={A:"Return due reminders",B:"Token events & orders",C:"Membership",D:"Payments & refunds",E:"Account alerts"};
 const SCREEN={"View my borrowing":"R1 · My Borrowing","Return now":"R1 · My Borrowing","View token history":"Token history","Start browsing":"H1 · Home","Renew membership":"S5-e · Membership (Renew → S2)","See plans":"S1-1 · Plans","View membership":"S5 · Membership","View billing history":"$1 · Billing history","View inspection":"O3 · Inspection result","View details":"O3-S · Inspection result (damage charge → Pay)","View order details":"O2 · Order details"};
 const E=[
-{id:"A1",g:"A",name:"3 days before due",st:"upd",who:"Both",when:"3 days before the due date of any borrowed item.",
- subject:"Just a heads-up — {{product_name}} is due in 3 days",pre:"Please return it by {{due_date}}",headline:"Your return is coming up",
- body:"Hi {{user_name}}, just a friendly reminder — your {{product_name}} is due back at {{branch_name}} on {{due_date}}. Returning it on time keeps your account in good standing.",cta:"View my borrowing",
+{id:"A1",order:true,g:"A",name:"3 days before due",st:"upd",who:"Both",when:"3 days before the due date of any borrowed item.",
+ subject:"Heads-up — your order is due in 3 days",pre:"Please return {{item_count}} items by {{due_date}}",headline:"Your return is coming up",
+ body:"Hi {{user_name}}, just a friendly reminder — your order is due back at {{branch_name}} on {{due_date}}. Returning it on time keeps your account in good standing.",cta:"View my borrowing",
  old:{pre:"Return by {{due_date}} to get your token back",body:"Hi {{user_name}}, just a friendly reminder — your {{product_name}} is due back at {{branch_name}} on {{due_date}}. Return it on time and your token will go straight back to your balance."},
- chg:["pre","body"],why:"Subscribers have no tokens, so the token line was removed."},
-{id:"A2",g:"A",name:"1 day before due",st:"upd",who:"Both",when:"1 day before the due date.",
- subject:"{{product_name}} is due tomorrow",pre:"Return on time to avoid late fees",headline:"Your return is due tomorrow",
- body:"Hi {{user_name}}, {{product_name}} is due back at {{branch_name}} tomorrow, {{due_date}}. Please return it on time — late returns have a 20 THB per day late fee, and you won’t be able to borrow until it’s back.",cta:"View my borrowing",
+ chg:["subject","pre","body"],why:"Subscribers have no tokens, so the token line was removed."},
+{id:"A2",order:true,g:"A",name:"1 day before due",st:"upd",who:"Both",when:"1 day before the due date.",
+ subject:"Your order is due tomorrow",pre:"Return on time to avoid late fees",headline:"Your return is due tomorrow",
+ body:"Hi {{user_name}}, your order is due back at {{branch_name}} tomorrow, {{due_date}}. Please return it on time — late returns have a 20 THB per item per day late fee, and you won’t be able to borrow until it’s back.",cta:"View my borrowing",
  old:{pre:"Return on time to avoid a forfeited token",body:"Hi {{user_name}}, {{product_name}} is due back at {{branch_name}} tomorrow, {{due_date}}. Please return it on time — if it's returned late, your token for this order won't be returned to your balance."},
- chg:["pre","body"],why:"Phase 1 rule: late fee 20 THB/day and borrowing is blocked while an item is overdue."},
-{id:"A3",g:"A",name:"1 day overdue",st:"upd",who:"Both",when:"1 day after the due date, item not returned.",
- subject:"{{product_name}} is overdue — please return it",pre:"You can borrow again once it’s back",headline:"Your return is overdue",
- body:"Hi {{user_name}}, {{product_name}} was due back at {{branch_name}} on {{due_date}} and hasn’t been returned yet. Late fees are 20 THB per day until it’s back, and you can’t borrow new items until it’s returned. If you used a token for this order, it was not returned to your balance.",cta:"Return now",
+ chg:["subject","pre","body"],why:"Phase 1 rule: late fee 20 THB/day and borrowing is blocked while an item is overdue."},
+{id:"A3",order:true,g:"A",name:"1 day overdue",st:"upd",who:"Both",when:"1 day after the due date, item not returned.",
+ subject:"Your order is overdue — please return it",pre:"You can borrow again once it’s back",headline:"Your return is overdue",
+ body:"Hi {{user_name}}, your order was due back at {{branch_name}} on {{due_date}} and hasn’t been returned yet. Late fees are 20 THB per item per day until it’s back, and you can’t borrow new items until it’s returned. If you used tokens for this order, they were not returned to your balance.",cta:"Return now",
  old:{subject:"{{product_name}} is overdue — your token was not returned",pre:"Please return it to {{branch_name}} as soon as you can",body:"Hi {{user_name}}, {{product_name}} was due back at {{branch_name}} on {{due_date}} and hasn't been returned yet. Because the due date has passed, the {{token_amount}} deducted for this order was not returned to your balance. Please still return the item to {{branch_name}} as soon as you can.",cta:"View my borrowing"},
- chg:["subject","pre","body","cta"],why:"Matches the overdue banner on Home and Cart (H1-R / H3-O)."},
+ chg:["subject","pre","body"],why:"Matches the overdue banner on Home and Cart (H1-R / H3-O)."},
 {id:"B1",g:"B",name:"Welcome bonus",st:"same",who:"Both",when:"Right after sign-up.",
  subject:"Welcome to MAY.I — here's {{token_amount}} to get started",pre:"Your welcome bonus is ready to use",headline:"Welcome to MAY.I!",
  body:"Hi {{user_name}}, thanks for joining MAY.I! We've added {{token_amount}} to your account so you can start borrowing right away.",cta:"Start browsing"},
-{id:"B2",g:"B",name:"Order confirmed",st:"upd",who:"Token member",when:"Token member completes checkout.",
- subject:"Your order is confirmed",pre:"{{product_name}} is ready for pickup at {{branch_name}}",headline:"You're all set!",
- body:"Hi {{user_name}}, your order for {{product_name}} is confirmed. We’ve deducted {{token_amount}} and received your {{amount}} deposit for this order. Pick it up at {{branch_name}} and return it by {{due_date}}.",cta:"View my borrowing",
+{id:"B2",order:true,g:"B",name:"Order confirmed",st:"upd",who:"Token member",when:"Token member completes checkout.",
+ subject:"Your order is confirmed",pre:"{{item_count}} items are ready for pickup at {{branch_name}}",headline:"You're all set!",
+ body:"Hi {{user_name}}, your order is confirmed. We’ve deducted {{token_amount}} and received your {{amount}} deposit. Pick it up at {{branch_name}} and return it by {{due_date}}.",cta:"View my borrowing",
  old:{body:"Hi {{user_name}}, your order for {{product_name}} is confirmed. We've deducted {{token_amount}} for this order. Pick it up at {{branch_name}} and return it by {{due_date}}."},
- chg:["body"],why:"Token members now pay a deposit per item."},
-{id:"B2-S",g:"B",name:"Order confirmed · subscriber",st:"new",who:"Subscriber",when:"Subscriber completes checkout.",
- subject:"Your order is confirmed",pre:"{{product_name}} is ready for pickup at {{branch_name}}",headline:"You’re all set!",
- body:"Hi {{user_name}}, your order for {{product_name}} is confirmed. As a subscriber, no tokens or deposit are needed. Pick it up at {{branch_name}} and return it by {{due_date}}.",cta:"View my borrowing"},
+ chg:["pre","body"],why:"Token members now pay a deposit per item."},
+{id:"B2-S",order:true,g:"B",name:"Order confirmed · subscriber",st:"new",who:"Subscriber",when:"Subscriber completes checkout.",
+ subject:"Your order is confirmed",pre:"{{item_count}} items are ready for pickup at {{branch_name}}",headline:"You’re all set!",
+ body:"Hi {{user_name}}, your order is confirmed. As a subscriber, no tokens or deposit are needed. Pick it up at {{branch_name}} and return it by {{due_date}}.",cta:"View my borrowing"},
 {id:"B3",g:"B",name:"Token refunded",st:"same",who:"Token member",when:"Item returned on time.",
  subject:"You got {{token_amount}} back",pre:"Thanks for returning {{product_name}} on time",headline:"Tokens returned to your balance",
  body:"Hi {{user_name}}, we've received your return of {{product_name}} — {{token_amount}} is back in your balance. Your current balance is {{current_balance}}.",cta:"View token history"},
@@ -217,15 +218,15 @@ const E=[
 {id:"D3",g:"D",name:"Damage charge due",st:"new",who:"Subscriber",when:"Inspection finds damage; subscriber has no deposit, so borrowing is blocked until paid.",
  subject:"You have a {{amount}} damage charge",pre:"Pay it to borrow again",headline:"A damage charge is due",
  body:"Hi {{user_name}}, our team found damage on {{product_name}} from order {{order_id}}. A damage charge of {{amount}} is due, and you can’t borrow new items until it’s paid.",cta:"View details"},
-{id:"E1",g:"E",name:"You can borrow again",st:"new",who:"Both",when:"Staff receives the overdue item and the late fee is paid — including when a suspended account has returned everything and is unlocked.",
+{id:"E1",order:true,g:"E",name:"You can borrow again",st:"new",who:"Both",when:"Staff receives the overdue item and the late fee is paid — including when a suspended account has returned everything and is unlocked.",
  subject:"You can borrow again",pre:"Your account is back to normal",headline:"You’re good to go",
- body:"Hi {{user_name}}, thanks for returning {{product_name}} and paying the {{amount}} late fee. Your account is back to normal, and you can borrow again.",cta:"Start browsing"},
+ body:"Hi {{user_name}}, thanks for returning your order and paying the {{amount}} late fee. Your account is back to normal, and you can borrow again.",cta:"Start browsing"},
 {id:"E2",g:"E",name:"Final warning · 29 days overdue",st:"new",who:"Both",when:"29 days after the due date, items still not returned (1 day before suspension). Not sent if the user has already submitted a return.",
  subject:"Return your overdue items by tomorrow",pre:"Your account will be suspended if they aren’t returned",headline:"Last day to return your items",
- body:"Hi {{user_name}}, some of your borrowed items are 29 days overdue. If they aren’t returned by {{suspend_date}}, your account will be suspended until they’re returned. Late fees are 20 THB per day until they’re back.",cta:"Return now"},
+ body:"Hi {{user_name}}, some of your borrowed items are 29 days overdue. If they aren’t returned by {{suspend_date}}, your account will be suspended until they’re returned. Late fees are 20 THB per item per day until they’re back.",cta:"Return now"},
 {id:"E3",g:"E",name:"Account suspended",st:"new",who:"Both",when:"Items not returned within 30 days of the due date.",
  subject:"Your MAY.I account has been suspended",pre:"Return your items to use your account again",headline:"Your account is suspended",
- body:"Hi {{user_name}}, your account has been suspended because {{item_count}} items were not returned within 30 days of their due date. Return them to use your account again. Late fees are 20 THB per day until they’re back.",cta:"Return now"}
+ body:"Hi {{user_name}}, your account has been suspended because {{item_count}} items were not returned within 30 days of their due date. Return them to use your account again. Late fees are 20 THB per item per day until they’re back.",cta:"Return now"}
 ];
 const PREF=e=>e.g==="A"?"Return due reminders · can turn off":e.g==="B"?"Token updates · can turn off":e.g==="C"?"Membership · can turn off":"Always sent (not in Notification settings)";
 
@@ -329,16 +330,16 @@ function renderView(){
     <div class="inbox"><div class="avatar">M</div><div><div class="from">MAY.I</div><div class="subj">${field("subject")}</div><div class="pre">${field("pre")}</div></div></div>
     <article class="mail${removed?" off":""}">
       <div class="top">${LOGO}</div>
-      <div class="body"><h3>${field("headline")}</h3><p>${field("body")}</p>
+      <div class="body"><h3>${field("headline")}</h3><p>${field("body")}</p>${c.order?`<div class="order"><div class="oh">Order <span class="ph">{{order_id}}</span> · <span class="ph">{{item_count}}</span> items</div><div><span class="ph">{{product_name}}</span> · <span class="ph">{{sku}}</span></div><div class="note">One line per item in the order</div></div>`:""}
         <a class="cta" href="#${e.id}" onclick="return false">${ctaHtml}</a></div>
       <div class="foot"><div style="margin-bottom:14px">${LOGO}</div><p style="margin:0">This email was sent regarding your MAY.I account activity.</p><p><a href="#" onclick="return false" style="color:inherit">Contact support</a></p><p style="margin-top:12px">Punpromotion Co., Ltd. · 196, 196/1-2 Pradipat Road, Phaya Thai, Bangkok 10400</p><p style="margin-top:12px">© 2026 MAY.I. All rights reserved.</p></div>
     </article>
   </section>
   <aside class="spec">
     <div class="card"><h4>Copy fields · Phase ${p}</h4><dl class="kv">
-      <dt>Subject</dt><dd>${ph(c.subject)}</dd><dt>Preheader</dt><dd>${ph(c.pre)}</dd><dt>Headline</dt><dd>${ph(c.headline)}</dd><dt>CTA</dt><dd>${esc(c.cta)}</dd><dt>Opens</dt><dd>${esc(screenOf(c.cta,p))}</dd><dt>Setting</dt><dd>${PREF(e)}</dd></dl></div>
+      <dt>Subject</dt><dd>${ph(c.subject)}</dd><dt>Preheader</dt><dd>${ph(c.pre)}</dd><dt>Headline</dt><dd>${ph(c.headline)}</dd><dt>CTA</dt><dd>${esc(c.cta)}</dd>${c.order?"<dt>Order summary</dt><dd>Order ID + every item (name · SKU)</dd>":""}<dt>Opens</dt><dd>${esc(screenOf(c.cta,p))}</dd><dt>Setting</dt><dd>${PREF(e)}</dd></dl></div>
     ${why?`<div class="card"><h4>${removed?"Why removed":"What changed"}</h4><p class="note">${esc(why)}${chgNote}</p></div>`:""}
-    <div class="card"><h4>Placeholders</h4><p class="note">${[...new Set((c.subject+c.pre+c.headline+c.body).match(/\{\{\w+\}\}/g)||[])].map(q=>`<span class="ph">${q}</span>`).join(" ")||"None"}</p></div>
+    <div class="card"><h4>Placeholders</h4><p class="note">${[...new Set((c.subject+c.pre+c.headline+c.body+(c.order?" {{order_id}} {{item_count}} {{product_name}} {{sku}}":"")).match(/\{\{\w+\}\}/g)||[])].map(q=>`<span class="ph">${q}</span>`).join(" ")||"None"}</p></div>
   </aside>`;
   wire();
 }
